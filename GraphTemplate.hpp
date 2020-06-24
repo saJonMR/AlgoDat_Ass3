@@ -43,11 +43,15 @@ public:
         distance = dis;
     }
 
+    int const dist() {
+        return distance;
+    }
+
     int weight(NodeTemplate const& a) {
         return adjacentNodes.find(a)->second; //returns weight
     }
 
-    std::map<NodeTemplate, int> connections() {
+    std::map<NodeTemplate, int> const connections() {
         return adjacentNodes;
     }
 
@@ -132,26 +136,37 @@ public:
 
     // TODO: implement Prim
     // TODO: implement Bellman-Ford
-    /*
+    
     void relax(NodeTemplate start, std::pair<NodeTemplate, int> connection) {
-        if(connection.first.weight() > )
+        if(connection.first.dist() > start.dist() + connection.second) {
+            connection.first.manipulate_parent(&start);
+            start.manipulate_distance(connection.first.dist() > start.dist());
+        }
     }
     
-    void bellman_fort(GraphTemplate G, NodeTemplate s) {
-        for(auto node : G.nodes) {
+    bool bellman_fort(NodeTemplate s) {
+        for(auto node : nodes) {
             node.manipulate_distance(INT_MAX);
             node.manipulate_parent(nullptr);
         }
         s.manipulate_distance(0);
         for(int i = 1; i < nodes.size(); i++) {
-            for(auto node : G.nodes) {
+            for(auto node : nodes) {
                 for(auto edge : node.connections()) {
                     relax(node, edge);
                 }
             }
         }
+        for(auto node : nodes) {
+            for(std::pair<NodeTemplate, int> edge : node.connections()) {
+                if(edge.first.dist() > node.dist() + edge.second) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
-    */
+    
     
 
     // TODO: implement printGraph function that generates a file written using the dot format
