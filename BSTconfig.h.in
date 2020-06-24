@@ -1,0 +1,3 @@
+// the configured options and settings for GuessWho
+#define GuessWho_VERSION_MAJOR @GuessWho_VERSION_MAJOR@
+#define GuessWho_VERSION_MINOR @GuessWho_VERSION_MINOR@ 
