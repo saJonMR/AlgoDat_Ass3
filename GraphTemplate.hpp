@@ -1,7 +1,6 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <iostream>
 
 // YOU CAN USE ONLY THE VECTORS, STRINGS AND MAPS FOR THIS ASSIGNMENT!
 
@@ -179,10 +178,9 @@ public:
     
     bool bellman_fort(NodeTemplate & s) {
         int pos = 0;
-        while(pos < nodes.size()) {
-            nodes[pos].init_distance();
-            nodes[pos].init_parent();
-            ++pos;
+        for(auto &node : nodes) {
+            node.init_distance();
+            node.init_parent();
         }
         s.manipulate_distance(20);
         for(int i = 1; i < nodes.size(); i++) {
