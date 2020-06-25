@@ -1,11 +1,12 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <iostream>
 
 // YOU CAN USE ONLY THE VECTORS, STRINGS AND MAPS FOR THIS ASSIGNMENT!
 
 
-class NodeTemplate {
+struct NodeTemplate {
 private:
     /* data */
     std::string label;
@@ -17,6 +18,7 @@ public:
     NodeTemplate(std::string name) {
         label = name;
         parent = nullptr;
+        distance = 0;
     }
 
     //~NodeTemplate();
@@ -35,15 +37,23 @@ public:
         adjacentNodes.erase(target);
     }
 
-    void manipulate_parent(NodeTemplate *target) {
-        parent = target;
+    void init_parent() {
+        parent = nullptr;
+    }
+
+    void init_distance() {
+        distance = INT_MAX;
+    }
+
+    void manipulate_parent(NodeTemplate target) {
+        parent = &target;
     }
 
     void manipulate_distance(int dis) {
         distance = dis;
     }
 
-    int const dist() {
+    int dist() {
         return distance;
     }
 
@@ -95,7 +105,7 @@ private:
     bool isDirected;
 
 public:
-    GraphTemplate(NodeTemplate start) {
+    GraphTemplate(NodeTemplate const& start) {
         nodes.push_back(start);
     }
 
@@ -111,7 +121,7 @@ public:
     }
 
     // TODO: implement method for adding a node
-    void add(NodeTemplate node) {
+    void add(NodeTemplate const& node) {
         nodes.push_back(node);
     }
 
@@ -133,39 +143,83 @@ public:
         }
         return -1;
     }
+    
+    std::string listNodes() {
+        for(auto it = nodes.begin(); it != nodes.end(); ++it) {
+            return it->name();
+        }
+    }
+    
+
+    std::string listNode(int x) {
+        return nodes[x].name();
+    }
 
     // TODO: implement Prim
     // TODO: implement Bellman-Ford
     
-    void relax(NodeTemplate start, std::pair<NodeTemplate, int> connection) {
-        if(connection.first.dist() > start.dist() + connection.second) {
-            connection.first.manipulate_parent(&start);
-            start.manipulate_distance(connection.first.dist() > start.dist());
+    void relax(NodeTemplate u, NodeTemplate v, int w) {
+        int uDist = u.dist();
+        int vDist = v.dist();
+        int weight = w;
+        if(vDist > uDist + w) {
+            v.manipulate_parent(u);
+            v.manipulate_distance(w + uDist);
+        }
+    }
+
+    bool hasNegative(NodeTemplate u, NodeTemplate v, int w) {
+        int uDist = u.dist();
+        int vDist = v.dist();
+        int weight = w;
+        if(vDist > uDist + w) {
+            return false;
         }
     }
     
-    bool bellman_fort(NodeTemplate s) {
-        for(auto node : nodes) {
-            node.manipulate_distance(INT_MAX);
-            node.manipulate_parent(nullptr);
+    bool bellman_fort(NodeTemplate & s) {
+        int pos = 0;
+        while(pos < nodes.size()) {
+            nodes[pos].init_distance();
+            nodes[pos].init_parent();
+            ++pos;
         }
-        s.manipulate_distance(0);
+        s.manipulate_distance(20);
         for(int i = 1; i < nodes.size(); i++) {
-            for(auto node : nodes) {
-                for(auto edge : node.connections()) {
-                    relax(node, edge);
+            for(auto& node : nodes) {
+                for(std::pair<NodeTemplate, int> edge : node.connections()) {
+                    //relax(node, edge.first, edge.second);
                 }
             }
         }
         for(auto node : nodes) {
-            for(std::pair<NodeTemplate, int> edge : node.connections()) {
-                if(edge.first.dist() > node.dist() + edge.second) {
-                    return false;
-                }
+            for(auto edge : node.connections()) {
+                //hasNegative(node, edge.first, edge.second);
             }
         }
         return true;
     }
+    
+    /*
+    std::string bellman_fort_fake(NodeTemplate s) {
+        for(auto node : nodes) {
+            node.manipulate_distance(INT_MAX);
+            node.init_parent();
+        }
+        s.manipulate_distance(0);
+        for(int i = 1; i < nodes.size(); i++) {
+            for(auto it = std::begin(nodes); it != std::end(nodes); ++it) {
+                return *it->name();
+            }
+        }
+        /*
+        for(auto node : nodes) {
+            return node.name();
+        }
+        
+        //return true;
+    }
+    */
     
     
 
